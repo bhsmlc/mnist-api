@@ -1,5 +1,5 @@
-from fastapi import FastAPI, HTTPException, UploadFile, File
-import os, uvicorn
+from fastapi import FastAPI, UploadFile, File
+import uvicorn
 import cv2
 import numpy as np
 import tensorflow as tf
