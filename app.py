@@ -4,6 +4,7 @@ import cv2
 import numpy as np
 import tensorflow as tf
 from tensorflow.keras import models, layers
+from typing import Optional
 
 app = FastAPI()
 model = models.load_model("mnistmodel.keras")
@@ -40,8 +41,7 @@ def predict_frame(image: UploadFile = File(...)):
     new_y = (280-new_h) // 2
 
     digit_crop = cv2.resize(digit_crop, (int(new_w), int(new_h)), interpolation=cv2.INTER_AREA)
-    blank = np.full(78400, 0)
-    blank = blank.reshape(280, 280)
+    blank = np.full((280, 280), 255, dtype=np.uint8)
     blank[int(new_y) : int(new_y) + int(new_h), int(new_x) : int(new_x) + int(new_w)] = digit_crop
     resized_img = cv2.resize(blank, (28, 28), interpolation=cv2.INTER_AREA)
     normalized_img = resized_img / 255.0
@@ -61,7 +61,7 @@ def predict(img):
     pass
 
 @app.get("/items/{item_id}")
-def read_tem(item_id: int, q: str | None = None):
+def read_tem(item_id: int, q: Optional[str]):
     return {"item_id": item_id, "q" : q}
 
 if __name__ == "__main__":

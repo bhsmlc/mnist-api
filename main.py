@@ -11,12 +11,12 @@ testing = dataset[0]
 x_train, y_train = training
 x_test, y_test = testing
 
+
 x_train_copy = x_train.copy()
 
 for i in range(60000):
-    print(i)
-    print("\033c")
     img = x_train[i]
+    img = 255 - img
 
     resized_img = cv2.resize(img, (280, 280), interpolation=cv2.INTER_AREA)
     _, thresholded_img = cv2.threshold(
@@ -48,7 +48,7 @@ for i in range(60000):
         interpolation=cv2.INTER_AREA
     )
 
-    blank = np.zeros((280, 280), dtype=np.uint8)
+    blank = np.full((280, 280), 255, dtype=np.uint8)
 
     blank[
         int(new_y):int(new_y)+int(new_h),
@@ -95,8 +95,7 @@ model.add(layer5)
 model.add(layer6)
 model.add(layer7)
 
-model.compile(optimizer="adam", loss="sparse_categorical_crossentropy", metrics=["accuracy"])
-model.fit(x_train, y_train, epochs=5, validation_data=(x_test, y_test), verbose=1)
-model.evaluate(x_test, y_test, verbose=2)
-model.save("mnistmodel.keras")
-
+# model.compile(optimizer="adam", loss="sparse_categorical_crossentropy", metrics=["accuracy"])
+# model.fit(x_train, y_train, epochs=5, validation_data=(x_test, y_test), verbose=1)
+# model.evaluate(x_test, y_test, verbose=2)
+# model.save("mnistmodel.keras")
