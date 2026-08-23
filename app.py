@@ -4,6 +4,7 @@ import cv2
 import numpy as np
 import tensorflow as tf
 from tensorflow.keras import models, layers
+import base64
 from typing import Optional
 
 app = FastAPI()
@@ -20,7 +21,7 @@ def predict_frame(image: UploadFile = File(...)):
     img = cv2.imdecode(nparr, cv2.IMREAD_COLOR)
 
     gray_img = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
-    gray_img = 255 - gray_img
+    # gray_img = 255 - gray_img
     resized_img = cv2.resize(gray_img, (280, 280), interpolation=cv2.INTER_AREA)
     _, thresholded_img = cv2.threshold(resized_img, 0, 255, cv2.THRESH_BINARY | cv2.THRESH_OTSU)
 
@@ -32,7 +33,7 @@ def predict_frame(image: UploadFile = File(...)):
         digit_crop = cv2.resize(digit_crop, (int(w), int(h)))
 
     if h == 0:
-        return {"prediction": "-1", "confidence": "-1"}
+        return {"prediction": "-1", "confidence": "-1", "preprocessed-img": "blank"}
 
     scalar = 200/h
     new_h = h * scalar
@@ -45,16 +46,22 @@ def predict_frame(image: UploadFile = File(...)):
     blank[int(new_y) : int(new_y) + int(new_h), int(new_x) : int(new_x) + int(new_w)] = digit_crop
     resized_img = cv2.resize(blank, (28, 28), interpolation=cv2.INTER_AREA)
     normalized_img = resized_img / 255.0
+
     tensor = normalized_img.reshape(1, 28, 28, 1)
+
+    response_img = normalized_img * 255
+    response_img = response_img.astype("uint8")
+    _, encoded_img = cv2.imencode(".jpg", response_img)
+    base64str = base64.b64encode(encoded_img.tobytes()).decode("utf-8")
 
     predictions = model.predict(tensor)[0]
     idx = np.where(predictions > 0.5)
     if idx[0].size == 0:
-        return {"prediction": "-1", "confidence": "-1"}
+        return {"prediction": "-1", "confidence": "-1", "preprocessed-img": str(base64str)}
     prediction = idx[0][0]
     confidence = predictions[prediction]
 
-    return {"prediction": str(prediction), "confidence": str(confidence)}
+    return {"prediction": str(prediction), "confidence": str(confidence), "preprocessed-img": str(base64str)}
 
 @app.post("/read-img")
 def predict(img):
