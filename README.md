@@ -1,58 +1,11 @@
-# Project Name
+# MNIST Handwritten Digits API
 
-Short description of what this project does.
-
-## Table of Contents
-
-- [Overview](#overview)
-- [Getting Started](#getting-started)
-- [Usage](#usage)
-- [API](#api)
-- [Development](#development)
-- [Testing](#testing)
-- [Contributing](#contributing)
-- [License](#license)
-
-## Overview
-
-Explain the purpose of this project and the problem it solves.
-
-## Getting Started
+An api that takes an image and returns the digit prediction for the image (0-9)
 
 ### Prerequisites
 
-List required tools, runtimes, and dependencies.
+requirements.txt
 
-### Installation
+### Getting Started
 
-```bash
-# Add setup commands here
-```
-
-## Usage
-
-```bash
-# Add usage examples here
-```
-
-## API
-
-Document available endpoints, request/response formats, and examples.
-
-## Development
-
-Describe local development workflow and useful commands.
-
-## Testing
-
-```bash
-# Add test commands here
-```
-
-## Contributing
-
-Describe contribution guidelines and how to submit changes.
-
-## License
-
-State the project license (for example, MIT).
+clone it, create a venv using python version 3.9.6, pip install -r requirements.txt, run the app.py
