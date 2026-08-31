@@ -30,7 +30,12 @@ def predict_frame(image: UploadFile = File(...)):
     nparr = np.frombuffer(file_bytes, np.uint8)
     img = cv2.imdecode(nparr, cv2.IMREAD_COLOR)
 
-    gray_img = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+
+    background = cv2.GaussianBlur(gray_img, (0, 0), 50) 
+
+    normalized = cv2.divide(gray_img, background, scale=255) # (gray_img / background) * 255
+
+    gray_img = cv2.cvtColor(normalized, cv2.COLOR_BGR2GRAY)
     gray_img = 255 - gray_img
 
     _, thresholded_img = cv2.threshold(gray_img, 0, 255, cv2.THRESH_BINARY | cv2.THRESH_OTSU)
