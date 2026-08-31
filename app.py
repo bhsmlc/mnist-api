@@ -39,16 +39,22 @@ def predict_frame(image: UploadFile = File(...)):
 
     # normalized = cv2.divide(gray_img, background, scale=255) # (gray_img / background) * 255
 
-    thresh = cv2.adaptiveThreshold(
-        gray_img,
-        255,
-        cv2.ADAPTIVE_THRESH_GAUSSIAN_C,
-        cv2.THRESH_BINARY,
-        115,
-        15
-    )
+    # thresh = cv2.adaptiveThreshold(
+    #     gray_img,
+    #     255,
+    #     cv2.ADAPTIVE_THRESH_GAUSSIAN_C,
+    #     cv2.THRESH_BINARY,
+    #     115,
+    #     15
+    # )
 
-    thresh = 255-thresh
+    # thresh = 255-thresh
+
+    gray_img = 255 - gray_img
+    low_val, _ = cv2.threshold(gray_img, 0, 255, cv2.THRESH_BINARY | cv2.THRESH_OTSU)
+    high_val = min(254, low_val * 1.25)
+    _, thresh = cv2.threshold(gray_img, high_val, 255, cv2.THRESH_BINARY)
+
 
     #_, thresholded_img = cv2.threshold(gray_img, 0, 255, cv2.THRESH_BINARY | cv2.THRESH_OTSU)
     thresholded_img = thresh.copy()
