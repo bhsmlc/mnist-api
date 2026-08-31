@@ -32,8 +32,22 @@ def predict_frame(image: UploadFile = File(...)):
 
     gray_img = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
     gray_img = 255 - gray_img
-    resized_img = cv2.resize(gray_img, (280, 280), interpolation=cv2.INTER_AREA)
-    _, thresholded_img = cv2.threshold(resized_img, 0, 255, cv2.THRESH_BINARY | cv2.THRESH_OTSU)
+
+    _, thresholded_img = cv2.threshold(gray_img, 0, 255, cv2.THRESH_BINARY | cv2.THRESH_OTSU)
+
+    height, width = thresholded_img.shape
+    biggest = max(width, height)
+
+    blank_canvas = np.full((biggest, biggest), 0, dtype=np.uint8)
+
+    if width > height:
+        y_offset = (width - height) // 2
+        blank_canvas[y_offset:y_offset + height, 0:width] = thresholded_img
+    else:
+        x_offset = (height - width) // 2
+        blank_canvas[0:height, x_offset:x_offset + width] = thresholded_img
+    
+    blank_canvas = cv2.resize(blank_canvas, (280, 280), interpolation=cv2.INTER_AREA)
 
     x, y, w, h = cv2.boundingRect(thresholded_img)
     digit_crop = thresholded_img[y:y+h, x:x+w]
@@ -52,7 +66,7 @@ def predict_frame(image: UploadFile = File(...)):
     new_y = (280-new_h) // 2
 
     digit_crop = cv2.resize(digit_crop, (int(new_w), int(new_h)), interpolation=cv2.INTER_AREA)
-    blank = np.full((280, 280), 255, dtype=np.uint8)
+    blank = np.full((280, 280), 0, dtype=np.uint8)
     blank[int(new_y) : int(new_y) + int(new_h), int(new_x) : int(new_x) + int(new_w)] = digit_crop
     resized_img = cv2.resize(blank, (28, 28), interpolation=cv2.INTER_AREA)
     normalized_img = resized_img / 255.0
