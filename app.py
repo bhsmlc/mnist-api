@@ -74,11 +74,12 @@ def predict_frame(image: UploadFile = File(...)):
     blank = np.full((280, 280), 0, dtype=np.uint8)
     blank[int(new_y) : int(new_y) + int(new_h), int(new_x) : int(new_x) + int(new_w)] = digit_crop
     resized_img = cv2.resize(blank, (28, 28), interpolation=cv2.INTER_AREA)
+    resized_img = cv2.threshold(resized_img, 0, 255, cv2.THRESH_BINARY)
     normalized_img = resized_img / 255.0
 
     tensor = normalized_img.reshape(1, 28, 28, 1)
 
-    response_img = normalized_img * 255
+    response_img = resized_img
     response_img = response_img.astype("uint8")
     _, encoded_img = cv2.imencode(".jpg", response_img)
     base64str = base64.b64encode(encoded_img.tobytes()).decode("utf-8")
