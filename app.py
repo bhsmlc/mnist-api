@@ -52,8 +52,9 @@ def predict_frame(image: UploadFile = File(...)):
 
     gray_img = 255 - gray_img
     low_val, _ = cv2.threshold(gray_img, 0, 255, cv2.THRESH_BINARY | cv2.THRESH_OTSU)
-    high_val = min(254, low_val * 1.5)
+    high_val = min(254, low_val * 1.75)
     _, thresh = cv2.threshold(gray_img, high_val, 255, cv2.THRESH_BINARY)
+    print(f"low_val: {low_val}, high_val: {high_val}")
 
 
     #_, thresholded_img = cv2.threshold(gray_img, 0, 255, cv2.THRESH_BINARY | cv2.THRESH_OTSU)
