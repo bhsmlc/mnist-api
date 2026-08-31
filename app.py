@@ -32,7 +32,7 @@ def predict_frame(image: UploadFile = File(...)):
 
 
     gray_img = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
-    background = cv2.GaussianBlur(gray_img, (0, 0), 100) 
+    background = cv2.GaussianBlur(gray_img, (0, 0), 200) 
 
     normalized = cv2.divide(gray_img, background, scale=255) # (gray_img / background) * 255
 
