@@ -31,12 +31,12 @@ def predict_frame(image: UploadFile = File(...)):
     img = cv2.imdecode(nparr, cv2.IMREAD_COLOR)
 
 
+    gray_img = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
     background = cv2.GaussianBlur(gray_img, (0, 0), 50) 
 
     normalized = cv2.divide(gray_img, background, scale=255) # (gray_img / background) * 255
 
-    gray_img = cv2.cvtColor(normalized, cv2.COLOR_BGR2GRAY)
-    gray_img = 255 - gray_img
+    gray_img = 255 - normalized
 
     _, thresholded_img = cv2.threshold(gray_img, 0, 255, cv2.THRESH_BINARY | cv2.THRESH_OTSU)
 
@@ -74,7 +74,7 @@ def predict_frame(image: UploadFile = File(...)):
     blank = np.full((280, 280), 0, dtype=np.uint8)
     blank[int(new_y) : int(new_y) + int(new_h), int(new_x) : int(new_x) + int(new_w)] = digit_crop
     resized_img = cv2.resize(blank, (28, 28), interpolation=cv2.INTER_AREA)
-    resized_img = cv2.threshold(resized_img, 0, 255, cv2.THRESH_BINARY)
+    _, resized_img = cv2.threshold(resized_img, 0, 255, cv2.THRESH_BINARY)
     normalized_img = resized_img / 255.0
 
     tensor = normalized_img.reshape(1, 28, 28, 1)
