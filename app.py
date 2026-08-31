@@ -31,6 +31,7 @@ def predict_frame(image: UploadFile = File(...)):
     img = cv2.imdecode(nparr, cv2.IMREAD_COLOR)
 
     gray_img = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+    gray_img = 255 - gray_img
     resized_img = cv2.resize(gray_img, (280, 280), interpolation=cv2.INTER_AREA)
     _, thresholded_img = cv2.threshold(resized_img, 0, 255, cv2.THRESH_BINARY | cv2.THRESH_OTSU)
 
