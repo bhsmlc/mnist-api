@@ -32,7 +32,7 @@ def predict_frame(image: UploadFile = File(...)):
 
 
     gray_img = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
-    gray_img = 255 - gray_img
+    
 
 
     # background = cv2.GaussianBlur(gray_img, (0, 0), 50) 
@@ -48,8 +48,10 @@ def predict_frame(image: UploadFile = File(...)):
         15
     )
 
+    thresh = 255-thresh
+
     #_, thresholded_img = cv2.threshold(gray_img, 0, 255, cv2.THRESH_BINARY | cv2.THRESH_OTSU)
-    thresholded_img = thresh
+    thresholded_img = thresh.copy()
 
     contours, _ = cv2.findContours(thresh, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
 
