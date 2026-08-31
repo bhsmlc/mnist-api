@@ -32,13 +32,33 @@ def predict_frame(image: UploadFile = File(...)):
 
 
     gray_img = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
-    background = cv2.GaussianBlur(gray_img, (0, 0), 200) 
+    gray_img = 255 - gray_img
 
-    normalized = cv2.divide(gray_img, background, scale=255) # (gray_img / background) * 255
 
-    gray_img = 255 - normalized
+    # background = cv2.GaussianBlur(gray_img, (0, 0), 50) 
 
-    _, thresholded_img = cv2.threshold(gray_img, 0, 255, cv2.THRESH_BINARY | cv2.THRESH_OTSU)
+    # normalized = cv2.divide(gray_img, background, scale=255) # (gray_img / background) * 255
+
+    thresh = cv2.adaptiveThreshold(
+        gray_img,
+        255,
+        cv2.ADAPTIVE_THRESH_GAUSSIAN_C,
+        cv2.THRESH_BINARY,
+        115,
+        15
+    )
+
+    #_, thresholded_img = cv2.threshold(gray_img, 0, 255, cv2.THRESH_BINARY | cv2.THRESH_OTSU)
+    thresholded_img = thresh
+
+    contours, _ = cv2.findContours(thresh, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+
+    for contour in contours:
+        area = cv2.contourArea(contour)
+        if area < 20:
+            cv2.drawContours(thresholded_img, [contour], -1, 0, thickness=cv2.FILLED)
+
+    
 
     height, width = thresholded_img.shape
     biggest = max(width, height)
