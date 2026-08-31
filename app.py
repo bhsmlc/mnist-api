@@ -52,19 +52,19 @@ def predict_frame(image: UploadFile = File(...)):
 
     gray_img = 255 - gray_img
     low_val, _ = cv2.threshold(gray_img, 0, 255, cv2.THRESH_BINARY | cv2.THRESH_OTSU)
-    high_val = min(254, low_val * 1.25)
+    high_val = min(254, low_val * 1.5)
     _, thresh = cv2.threshold(gray_img, high_val, 255, cv2.THRESH_BINARY)
 
 
     #_, thresholded_img = cv2.threshold(gray_img, 0, 255, cv2.THRESH_BINARY | cv2.THRESH_OTSU)
     thresholded_img = thresh.copy()
 
-    contours, _ = cv2.findContours(thresh, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+    # contours, _ = cv2.findContours(thresh, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
 
-    for contour in contours:
-        area = cv2.contourArea(contour)
-        if area < 20:
-            cv2.drawContours(thresholded_img, [contour], -1, 0, thickness=cv2.FILLED)
+    # for contour in contours:
+    #     area = cv2.contourArea(contour)
+    #     if area < 20:
+    #         cv2.drawContours(thresholded_img, [contour], -1, 0, thickness=cv2.FILLED)
 
     
 
