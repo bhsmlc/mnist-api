@@ -3,8 +3,7 @@ from fastapi.middleware.cors import CORSMiddleware
 import uvicorn
 import cv2
 import numpy as np
-import tensorflow as tf
-from tensorflow.keras import models, layers
+import tflite_runtime.interpreter as tflite
 import base64
 from typing import Optional
 
@@ -18,7 +17,12 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-model = models.load_model("mnistmodel.keras")
+interpreter = tflite.Interpreter(model_path="mnistmodel.tflite")
+interpreter.allocate_tensors()
+
+input_details = interpreter.get_input_details()
+output_details = interpreter.get_output_details()
+
 
 @app.get("/")
 def read_root():
@@ -104,14 +108,17 @@ def predict_frame(image: UploadFile = File(...)):
     _, resized_img = cv2.threshold(resized_img, 0, 255, cv2.THRESH_BINARY)
     normalized_img = resized_img / 255.0
 
-    tensor = normalized_img.reshape(1, 28, 28, 1)
+    tensor = normalized_img.reshape(1, 28, 28, 1).astype(np.float32)
 
     response_img = resized_img
     response_img = response_img.astype("uint8")
     _, encoded_img = cv2.imencode(".jpg", response_img)
     base64str = base64.b64encode(encoded_img.tobytes()).decode("utf-8")
 
-    predictions = model.predict(tensor)[0]
+    interpreter.set_tensor(input_details[0]['index'], tensor)
+    interpreter.invoke()
+    predictions = interpreter.get_tensor(output_details[0]['index'])[0]
+
     idx = np.where(predictions > 0.5)
     if idx[0].size == 0:
         return {"prediction": "-1", "confidence": "-1", "preprocessed-img": str(base64str)}
