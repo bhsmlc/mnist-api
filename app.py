@@ -3,7 +3,7 @@ from fastapi.middleware.cors import CORSMiddleware
 import uvicorn
 import cv2
 import numpy as np
-import tflite_runtime.interpreter as tflite
+import ai_edge_litert.interpreter as tflite
 import base64
 from typing import Optional
 
