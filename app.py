@@ -53,7 +53,7 @@ def predict_frame(image: UploadFile = File(...), inverted: bool = False, scale: 
     # )
 
     # thresh = 255-thresh
-    if (inverted):
+    if (not inverted):
         gray_img = 255 - gray_img
     low_val, _ = cv2.threshold(gray_img, 0, 255, cv2.THRESH_BINARY | cv2.THRESH_OTSU)
     high_val = min(250, low_val * scale)
