@@ -29,7 +29,7 @@ def read_root():
     return {}
 
 @app.post("/predict-frame")
-def predict_frame(image: UploadFile = File(...)):
+def predict_frame(image: UploadFile = File(...), inverted: bool = False, scale: float = 1.5):
     file_bytes = image.file.read()
     nparr = np.frombuffer(file_bytes, np.uint8)
     img = cv2.imdecode(nparr, cv2.IMREAD_COLOR)
@@ -53,10 +53,10 @@ def predict_frame(image: UploadFile = File(...)):
     # )
 
     # thresh = 255-thresh
-
-    gray_img = 255 - gray_img
+    if (inverted):
+        gray_img = 255 - gray_img
     low_val, _ = cv2.threshold(gray_img, 0, 255, cv2.THRESH_BINARY | cv2.THRESH_OTSU)
-    high_val = min(250, low_val * 1.5)
+    high_val = min(250, low_val * scale)
     _, thresh = cv2.threshold(gray_img, high_val, 255, cv2.THRESH_BINARY)
 
     #_, thresholded_img = cv2.threshold(gray_img, 0, 255, cv2.THRESH_BINARY | cv2.THRESH_OTSU)
