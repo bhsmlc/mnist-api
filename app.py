@@ -1,4 +1,4 @@
-from fastapi import FastAPI, UploadFile, File
+from fastapi import FastAPI, UploadFile, File, Form
 from fastapi.middleware.cors import CORSMiddleware
 import uvicorn
 import cv2
@@ -29,7 +29,7 @@ def read_root():
     return {}
 
 @app.post("/predict-frame")
-def predict_frame(image: UploadFile = File(...), inverted: bool = False, scale: float = 1.5):
+def predict_frame(image: UploadFile = File(...), inverted: bool = Form(False), scale: float = Form(1.5)):
     file_bytes = image.file.read()
     nparr = np.frombuffer(file_bytes, np.uint8)
     img = cv2.imdecode(nparr, cv2.IMREAD_COLOR)
