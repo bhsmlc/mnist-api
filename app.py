@@ -11,7 +11,7 @@ app = FastAPI()
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://127.0.0.1:5500", "https://bhsmlc.github.io"],
+    allow_origins=["http://127.0.0.1:5500", "https://bhsmlc.github.io", "https://bhsmachinelearning.com"],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
